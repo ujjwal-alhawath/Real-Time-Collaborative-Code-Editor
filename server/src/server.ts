@@ -3,12 +3,17 @@ import app from './app';
 import { env } from './config/env';
 import { connectDB, disconnectDB } from './config/db';
 import { initRedis, disconnectRedis } from './config/redis';
+import { initSocket } from './socket';
+import { initExecutionQueue } from './services/execution.service';
 import { logger } from './utils/logger';
 
 const server = http.createServer(app);
 
+// Initialize Socket.io
+initSocket(server);
+
 /**
- * Start the server: connect DB, Redis, then listen.
+ * Start the server: connect DB, Redis, Queue, then listen.
  */
 const start = async (): Promise<void> => {
   try {
@@ -17,6 +22,9 @@ const start = async (): Promise<void> => {
 
     // Initialize Redis connection
     await initRedis();
+    
+    // Initialize BullMQ Queue
+    initExecutionQueue();
 
     // Start HTTP server
     server.listen(env.PORT, () => {

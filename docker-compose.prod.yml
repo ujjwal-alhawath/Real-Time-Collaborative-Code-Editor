@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6
+    container_name: codesync-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    container_name: codesync-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    container_name: codesync-server
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - MONGO_URI=mongodb://mongodb:27017/codesync
+      - REDIS_URL=redis://redis:6379
+      - JWT_ACCESS_SECRET=your_super_secret_access_key
+      - JWT_REFRESH_SECRET=your_super_secret_refresh_key
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mongodb
+      - redis
+
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:4000/api/v1
+    container_name: codesync-client
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+
+volumes:
+  mongo_data:
+  redis_data:

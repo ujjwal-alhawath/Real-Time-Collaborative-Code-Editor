@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Room from './pages/Room';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
       {/* Protected Routes */}
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
-        {/* Room page will go here in Phase 2 */}
+        <Route path="/room/:roomId" element={<Room />} />
       </Route>
       
       <Route path="*" element={<Navigate to="/dashboard" replace />} />

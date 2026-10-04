@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui/Button';
@@ -7,6 +8,7 @@ import toast from 'react-hot-toast';
 
 const Dashboard = () => {
   const { user, logout } = useAuthStore();
+  const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [newRoomName, setNewRoomName] = useState('');
@@ -119,7 +121,9 @@ const Dashboard = () => {
                       </div>
                     )}
                   </div>
-                  <Button size="sm">Join Room</Button>
+                  <Button size="sm" onClick={() => navigate(`/room/${room.roomId}`)}>
+                    Join Room
+                  </Button>
                 </div>
               </div>
             ))}
